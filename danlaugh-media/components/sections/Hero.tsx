@@ -85,7 +85,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           variants={fadeUpVariants}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <button
             onClick={scrollToProjects}
@@ -101,28 +101,34 @@ export default function Hero() {
             Start a Project
           </button>
         </motion.div>
-
-        {/* Stats bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="flex justify-center"
-        >
-          <div className="flex items-center gap-12 px-8 py-4 border border-white/5 rounded-sm bg-white/[0.02] backdrop-blur-sm">
-            {[
-              { value: '200+', label: 'Projects' },
-              { value: '5+', label: 'Years' },
-              { value: '98%', label: 'Satisfaction' },
-            ].map((stat, i) => (
-              <div key={i} className="text-center">
-                <div className="font-display font-bold text-2xl text-white">{stat.value}</div>
-                <div className="text-text-secondary text-xs tracking-widest uppercase mt-0.5">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
       </div>
+<br>
+  <br>
+    <br>
+      <br>
+        <br>
+          <br>
+            <br>
+      {/* Stats bar */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.6 }}
+        className="absolute bottom-24 left-0 right-0 flex justify-center"
+      >
+        <div className="flex items-center gap-12 px-8 py-4 border border-white/5 rounded-sm bg-white/[0.02] backdrop-blur-sm">
+          {[
+            { value: '200+', label: 'Projects' },
+            { value: '5+', label: 'Years' },
+            { value: '98%', label: 'Satisfaction' },
+          ].map((stat, i) => (
+            <div key={i} className="text-center">
+              <div className="font-display font-bold text-2xl text-white">{stat.value}</div>
+              <div className="text-text-secondary text-xs tracking-widest uppercase mt-0.5">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </motion.div>
 
       {/* Scroll indicator */}
       <motion.button
