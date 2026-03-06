@@ -37,8 +37,9 @@ export default function Hero() {
         }}
       />
 
-      {/* Content */}
-      <div className="relative z-10 text-center max-w-5xl mx-auto px-6">
+      {/* Content — single vertical stack, no absolute children */}
+      <div className="relative z-10 text-center max-w-5xl mx-auto px-6 flex flex-col items-center gap-0">
+
         {/* Eyebrow */}
         <motion.div
           custom={0.1}
@@ -73,7 +74,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           variants={fadeUpVariants}
-          className="text-text-secondary font-body text-lg md:text-xl max-w-xl mx-auto leading-relaxed mb-12"
+          className="text-text-secondary font-body text-lg md:text-xl max-w-xl mx-auto leading-relaxed mb-10"
         >
           We craft cinematic stories that move people — from commercial campaigns to
           music videos, documentaries, and beyond.
@@ -85,50 +86,44 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           variants={fadeUpVariants}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-sm sm:max-w-none mb-12"
         >
           <button
             onClick={scrollToProjects}
-            className="group flex items-center gap-3 px-8 py-4 bg-accent hover:bg-accent-hover text-white font-medium rounded-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/25"
+            className="group w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-accent hover:bg-accent-hover text-white font-medium rounded-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/25"
           >
-            <Play size={16} className="group-hover:scale-110 transition-transform" />
+            <Play size={16} className="group-hover:scale-110 transition-transform" fill="white" />
             View Our Work
           </button>
           <button
             onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
-            className="flex items-center gap-3 px-8 py-4 border border-white/10 hover:border-accent/40 text-white font-medium rounded-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white/3"
+            className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 border border-white/10 hover:border-accent/40 text-white font-medium rounded-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white/5"
           >
             Start a Project
           </button>
         </motion.div>
+
+        {/* Stats bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+        >
+          <div className="flex items-center gap-8 sm:gap-12 px-8 py-4 border border-white/5 rounded-sm bg-white/[0.02] backdrop-blur-sm">
+            {[
+              { value: '200+', label: 'Projects' },
+              { value: '5+', label: 'Years' },
+              { value: '98%', label: 'Satisfaction' },
+            ].map((stat, i) => (
+              <div key={i} className="text-center">
+                <div className="font-display font-bold text-2xl text-white">{stat.value}</div>
+                <div className="text-text-secondary text-xs tracking-widest uppercase mt-0.5">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
       </div>
-<br>
-  <br>
-    <br>
-      <br>
-        <br>
-          <br>
-            <br>
-      {/* Stats bar */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.6 }}
-        className="absolute bottom-24 left-0 right-0 flex justify-center"
-      >
-        <div className="flex items-center gap-12 px-8 py-4 border border-white/5 rounded-sm bg-white/[0.02] backdrop-blur-sm">
-          {[
-            { value: '200+', label: 'Projects' },
-            { value: '5+', label: 'Years' },
-            { value: '98%', label: 'Satisfaction' },
-          ].map((stat, i) => (
-            <div key={i} className="text-center">
-              <div className="font-display font-bold text-2xl text-white">{stat.value}</div>
-              <div className="text-text-secondary text-xs tracking-widest uppercase mt-0.5">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </motion.div>
 
       {/* Scroll indicator */}
       <motion.button
