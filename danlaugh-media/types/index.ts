@@ -33,4 +33,12 @@ export interface ContactFormData {
   message: string
 }
 
-export type ProjectCategory = 'All' | 'Commercial' | 'Music Video' | 'Documentary' | 'Wedding' | 'Corporate' | 'Short Film'
+export type ProjectGenre =
+  | 'Motion Graphics'
+  | 'Documentary'
+  | 'Talking Head'
+  | 'YouTube Short Films'
+  | 'Fashion'
+  | 'Wedding'
+  | 'Sports'
+  | 'Music'
