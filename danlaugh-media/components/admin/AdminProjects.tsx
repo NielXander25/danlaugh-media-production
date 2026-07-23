@@ -15,6 +15,7 @@ const GENRES = [
   'Wedding',
   'Sports',
   'Music',
+  'Animation',
 ]
 
 const emptyForm = {
@@ -32,33 +33,23 @@ const inputClass = `
   transition-all duration-200
 `
 
-// Detect what type of video link was pasted
 function detectVideoType(url: string): string {
   if (url.includes('drive.google.com')) return 'google-drive'
   if (url.includes('vimeo.com')) return 'vimeo'
   if (url.includes('youtube.com') || url.includes('youtu.be')) return 'youtube'
-  if (url.length === 11) return 'youtube' // raw YouTube ID
+  if (url.length === 11) return 'youtube'
   return 'unknown'
 }
 
-// Extract a usable ID or return the URL as-is
 function extractVideoId(url: string): string {
-  // YouTube
   const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
   if (ytMatch) return ytMatch[1]
-
-  // Google Drive — store full URL, modal handles it
   if (url.includes('drive.google.com')) return url
-
-  // Vimeo
   const vimeoMatch = url.match(/vimeo\.com\/(\d+)/)
   if (vimeoMatch) return vimeoMatch[1]
-
-  // Raw ID or other — store as-is
   return url.trim()
 }
 
-// Get YouTube thumbnail from video ID
 function getYoutubeThumbnail(videoId: string): string {
   if (videoId.length === 11) {
     return `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
@@ -103,7 +94,6 @@ export default function AdminProjects() {
     setForm((prev) => ({
       ...prev,
       video_id: id,
-      // Auto-fill YouTube thumbnail if not already set
       thumbnail_url: prev.thumbnail_url || thumb,
     }))
   }
@@ -112,7 +102,6 @@ export default function AdminProjects() {
     e.preventDefault()
     setSaving(true)
     setFormError(null)
-
     try {
       const supabase = createClient()
       const payload = {
@@ -122,7 +111,6 @@ export default function AdminProjects() {
         category: form.category,
         featured: form.featured,
       }
-
       if (editingId) {
         const { error } = await supabase.from('projects').update(payload).eq('id', editingId)
         if (error) throw error
@@ -130,7 +118,6 @@ export default function AdminProjects() {
         const { error } = await supabase.from('projects').insert([payload])
         if (error) throw error
       }
-
       await refetch()
       resetForm()
     } catch (err) {
@@ -141,7 +128,7 @@ export default function AdminProjects() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this project?')) return
+    if (!confirm('Delete this video?')) return
     setDeletingId(id)
     try {
       const supabase = createClient()
@@ -160,7 +147,6 @@ export default function AdminProjects() {
     )
   }
 
-  // Group by genre for display
   const byGenre = GENRES.reduce<Record<string, Project[]>>((acc, g) => {
     acc[g] = projects.filter((p) => p.category === g)
     return acc
@@ -180,7 +166,7 @@ export default function AdminProjects() {
         </button>
       </div>
 
-      {/* How to add videos help box */}
+      {/* Help box */}
       <div className="p-4 bg-accent/5 border border-accent/15 rounded-sm">
         <button
           onClick={() => setShowHelp(!showHelp)}
@@ -190,7 +176,6 @@ export default function AdminProjects() {
           How to add videos from YouTube / Google Drive / Vimeo
           <span className="ml-auto text-xs">{showHelp ? '▲ Hide' : '▼ Show'}</span>
         </button>
-
         {showHelp && (
           <div className="mt-4 space-y-3 text-text-secondary text-xs">
             <div className="p-3 bg-white/[0.03] rounded-sm border border-white/8">
@@ -228,7 +213,6 @@ export default function AdminProjects() {
             </button>
           </div>
 
-          {/* Title */}
           <div>
             <label className="text-xs text-text-secondary block mb-1">Video Title *</label>
             <input
@@ -240,7 +224,6 @@ export default function AdminProjects() {
             />
           </div>
 
-          {/* Video URL */}
           <div>
             <label className="text-xs text-text-secondary block mb-1">
               Video URL or ID *
@@ -266,7 +249,6 @@ export default function AdminProjects() {
             />
           </div>
 
-          {/* Genre + Thumbnail */}
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs text-text-secondary block mb-1">Genre *</label>
@@ -296,7 +278,6 @@ export default function AdminProjects() {
             </div>
           </div>
 
-          {/* Thumbnail preview */}
           {form.thumbnail_url && (
             <div>
               <label className="text-xs text-text-secondary block mb-1">Thumbnail Preview</label>
@@ -309,7 +290,6 @@ export default function AdminProjects() {
             </div>
           )}
 
-          {/* Featured */}
           <label className="flex items-center gap-2 cursor-pointer w-fit">
             <input
               type="checkbox"
@@ -342,7 +322,7 @@ export default function AdminProjects() {
         </form>
       )}
 
-      {/* Projects grouped by genre */}
+      {/* Videos grouped by genre */}
       <div className="space-y-8">
         {GENRES.map((genre) => {
           const genreProjects = byGenre[genre]
@@ -365,7 +345,7 @@ export default function AdminProjects() {
                       alt={project.title}
                       className="w-20 h-12 object-cover rounded-sm flex-shrink-0 bg-white/5"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="48"%3E%3Crect width="80" height="48" fill="%23111"/%3E%3C/svg%3E'
+                        (e.target as HTMLImageElement).src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='48'%3E%3Crect width='80' height='48' fill='%23111'/%3E%3C/svg%3E"
                       }}
                     />
                     <div className="flex-1 min-w-0">
@@ -383,7 +363,6 @@ export default function AdminProjects() {
                       <button
                         onClick={() => startEdit(project)}
                         className="p-1.5 text-text-secondary hover:text-accent transition-colors"
-                        title="Edit"
                       >
                         <Pencil size={14} />
                       </button>
@@ -391,12 +370,10 @@ export default function AdminProjects() {
                         onClick={() => handleDelete(project.id)}
                         disabled={deletingId === project.id}
                         className="p-1.5 text-text-secondary hover:text-red-400 transition-colors"
-                        title="Delete"
                       >
                         {deletingId === project.id
                           ? <Loader2 size={14} className="animate-spin" />
-                          : <Trash2 size={14} />
-                        }
+                          : <Trash2 size={14} />}
                       </button>
                     </div>
                   </div>
@@ -405,7 +382,6 @@ export default function AdminProjects() {
             </div>
           )
         })}
-
         {projects.length === 0 && (
           <div className="text-center py-16 text-text-secondary border border-white/5 rounded-sm">
             No videos yet. Click "Add Video" to get started.
