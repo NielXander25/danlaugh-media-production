@@ -42,3 +42,4 @@ export type ProjectGenre =
   | 'Wedding'
   | 'Sports'
   | 'Music'
+  | 'Animation'
