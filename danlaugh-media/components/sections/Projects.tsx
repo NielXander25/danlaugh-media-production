@@ -17,6 +17,7 @@ const GENRES = [
   'Wedding',
   'Sports',
   'Music',
+  'Animation',
 ]
 
 function GenreSection({
@@ -102,7 +103,9 @@ function VideoCard({
 }) {
   const thumbnailUrl =
     project.thumbnail_url ||
-    `https://img.youtube.com/vi/${project.video_id}/mqdefault.jpg`
+    (project.video_id.length === 11
+      ? `https://img.youtube.com/vi/${project.video_id}/mqdefault.jpg`
+      : '/placeholder-thumb.jpg')
 
   return (
     <motion.div
@@ -114,14 +117,18 @@ function VideoCard({
     >
       {/* Thumbnail */}
       <div className="relative aspect-video overflow-hidden rounded-sm bg-white/5 border border-white/8 group-hover:border-accent/30 transition-all duration-300">
-        <Image
-          src={thumbnailUrl}
-          alt={project.title}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-          sizes="(max-width: 768px) 50vw, 25vw"
-          loading="lazy"
-        />
+        {thumbnailUrl.startsWith('/') || thumbnailUrl.startsWith('http') ? (
+          <img
+            src={thumbnailUrl}
+            alt={project.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src =
+                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='180'%3E%3Crect width='320' height='180' fill='%23111'/%3E%3C/svg%3E"
+            }}
+          />
+        ) : null}
 
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
@@ -161,9 +168,6 @@ export default function Projects() {
     return acc
   }, {})
 
-  // Count genres that have videos
-  const activeGenres = GENRES.filter((g) => byGenre[g].length > 0)
-
   return (
     <section id="projects" ref={ref} className="section-padding bg-black relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[500px] h-[300px] bg-accent/3 rounded-full blur-[120px]" />
@@ -190,12 +194,12 @@ export default function Projects() {
           </p>
         </motion.div>
 
-        {/* Genre pills — 4 per row */}
+        {/* Genre pills — 5 cols on desktop (9 genres, wraps naturally) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-14"
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-14"
         >
           {GENRES.map((genre) => {
             const count = byGenre[genre]?.length || 0
