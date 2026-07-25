@@ -38,7 +38,7 @@ export default function Hero() {
       />
 
       {/* Content — single vertical stack, no absolute children */}
-      <div className="relative z-10 text-center max-w-5xl mx-auto px-6 flex flex-col items-center gap-0">
+      <div className="relative z-10 text-center max-w-5xl mx-auto px-4 sm:px-6 flex flex-col items-center gap-0 pt-24 sm:pt-0">
 
         {/* Eyebrow */}
         <motion.div
@@ -49,7 +49,7 @@ export default function Hero() {
           className="inline-flex items-center gap-2 mb-8"
         >
           <span className="w-8 h-px bg-accent" />
-          <span className="text-accent text-xs font-mono tracking-[0.3em] uppercase">
+          <span className="text-accent text-xs font-mono tracking-widest sm:tracking-[0.3em] uppercase">
             Video Production Studio
           </span>
           <span className="w-8 h-px bg-accent" />
@@ -74,7 +74,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           variants={fadeUpVariants}
-          className="text-text-secondary font-body text-lg md:text-xl max-w-xl mx-auto leading-relaxed mb-10"
+          className="text-text-secondary font-body text-base sm:text-lg md:text-xl max-w-xl mx-auto leading-relaxed mb-10"
         >
           We craft cinematic stories that move people — from commercial campaigns to
           music videos, documentaries, and beyond.
