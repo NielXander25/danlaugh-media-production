@@ -3,10 +3,24 @@
 import { useState, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Mail, Phone, Send, CheckCircle, Loader2, MessageCircle } from 'lucide-react'
-import type { ContactFormData } from '@/types'
 
-const PROJECT_TYPES = ['Commercial Video', 'Music Video', 'Documentary', 'Wedding Film', 'Corporate Video', 'Short Film', 'Other']
-const BUDGET_RANGES = ['Under ₦100k', '₦100k–₦300k', '₦300k–₦500k', '₦500k–₦1M', 'Above ₦1M', 'Let\'s Discuss']
+const SERVICE_TYPES = [
+  'Standard Video Editing',
+  'Motion Graphics',
+  'Documentary',
+  'Talking Head',
+  'YouTube Short Films',
+  'Fashion',
+  'Wedding Film',
+  'Sports',
+  'Music Video',
+  'Animation',
+]
+
+const ENGAGEMENT_TYPES = [
+  'One-Time Package / Single Order',
+  'Monthly Retainer (15% Discount)',
+]
 
 const inputClass = `
   w-full px-4 py-3 bg-white/[0.04] border border-white/8 rounded-sm
@@ -15,14 +29,29 @@ const inputClass = `
   transition-all duration-300
 `
 
+const labelClass = 'block text-white font-semibold text-sm mb-3'
+
+interface FormData {
+  name: string
+  email: string
+  service_type: string
+  video_count: string
+  reference_links: string
+  engagement_type: string
+  message: string
+}
+
 export default function Contact() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
-  const [form, setForm] = useState<ContactFormData>({
+
+  const [form, setForm] = useState<FormData>({
     name: '',
     email: '',
-    project_type: '',
-    budget_range: '',
+    service_type: '',
+    video_count: '1',
+    reference_links: '',
+    engagement_type: '',
     message: '',
   })
   const [submitting, setSubmitting] = useState(false)
@@ -31,6 +60,8 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!form.service_type) { setError('Please select a service type'); return }
+    if (!form.engagement_type) { setError('Please select how you want to work together'); return }
     setSubmitting(true)
     setError(null)
 
@@ -38,12 +69,18 @@ export default function Contact() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          project_type: form.service_type,
+          budget_range: form.engagement_type,
+          message: `Videos needed: ${form.video_count}\nReference links: ${form.reference_links || 'None'}\nEngagement: ${form.engagement_type}\n\n${form.message}`,
+        }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to send')
       setSuccess(true)
-      setForm({ name: '', email: '', project_type: '', budget_range: '', message: '' })
+      setForm({ name: '', email: '', service_type: '', video_count: '1', reference_links: '', engagement_type: '', message: '' })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send message')
     } finally {
@@ -72,16 +109,16 @@ export default function Contact() {
         </motion.div>
 
         <div className="grid lg:grid-cols-5 gap-12">
-          {/* Left: Info */}
+          {/* Left: contact info */}
           <motion.div {...fadeUp(0.1)} className="lg:col-span-2 space-y-8">
             <p className="text-text-secondary leading-relaxed">
-              Ready to bring your vision to life? Tell us about your project and 
+              Ready to bring your vision to life? Answer a few quick questions and
               let&apos;s create something extraordinary together.
             </p>
 
             <div className="space-y-4">
               <a
-                href="tel:08151603641"
+                href="tel:08141603641"
                 className="flex items-center gap-4 p-4 border border-white/8 hover:border-accent/25 rounded-sm transition-all duration-300 group"
               >
                 <div className="w-10 h-10 flex items-center justify-center bg-accent/10 group-hover:bg-accent/15 rounded-sm transition-colors">
@@ -89,7 +126,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <div className="text-xs text-text-secondary uppercase tracking-wider mb-0.5">WhatsApp / Call</div>
-                  <div className="text-white font-medium">08151603641</div>
+                  <div className="text-white font-medium">08141603641</div>
                 </div>
               </a>
 
@@ -107,7 +144,7 @@ export default function Contact() {
               </a>
 
               <a
-                href="https://wa.me/2348151603641"
+                href="https://wa.me/2348141603641"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 p-4 bg-accent/10 hover:bg-accent/15 border border-accent/20 hover:border-accent/40 rounded-sm transition-all duration-300 group"
@@ -143,64 +180,120 @@ export default function Contact() {
                 </button>
               </motion.div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-8">
+
+                {/* Name + Email */}
                 <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Your Name *</label>
+                    <input
+                      type="text"
+                      required
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      placeholder="John Doe"
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Email Address *</label>
+                    <input
+                      type="email"
+                      required
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      placeholder="you@example.com"
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+
+                {/* Q1: Service type */}
+                <div>
+                  <label className={labelClass}>What type of project are we building? *</label>
+                  <div className="flex flex-wrap gap-2">
+                    {SERVICE_TYPES.map((type) => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => setForm({ ...form, service_type: type })}
+                        className={`px-4 py-2 text-sm rounded-sm border transition-all duration-200 ${
+                          form.service_type === type
+                            ? 'bg-accent border-accent text-white'
+                            : 'border-white/10 text-text-secondary hover:border-accent/40 hover:text-white'
+                        }`}
+                      >
+                        {type}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Q2: Video count */}
+                <div>
+                  <label className={labelClass}>How many videos do you need? *</label>
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    value={form.video_count}
+                    onChange={(e) => setForm({ ...form, video_count: e.target.value })}
+                    className={`${inputClass} max-w-xs`}
+                  />
+                </div>
+
+                {/* Q3: Reference links */}
+                <div>
+                  <label className={labelClass}>
+                    Paste links to any reference videos or visual styles you like:
+                    <span className="text-text-secondary font-normal ml-1">(optional)</span>
+                  </label>
                   <input
                     type="text"
-                    placeholder="Your Name"
-                    required
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className={inputClass}
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email Address"
-                    required
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    value={form.reference_links}
+                    onChange={(e) => setForm({ ...form, reference_links: e.target.value })}
+                    placeholder="https://..."
                     className={inputClass}
                   />
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <select
-                    required
-                    value={form.project_type}
-                    onChange={(e) => setForm({ ...form, project_type: e.target.value })}
-                    className={`${inputClass} text-${form.project_type ? 'white' : 'text-secondary'}`}
-                  >
-                    <option value="" disabled>Project Type</option>
-                    {PROJECT_TYPES.map((t) => (
-                      <option key={t} value={t} className="bg-black">{t}</option>
+                {/* Q4: Engagement type */}
+                <div>
+                  <label className={labelClass}>How would you like to work together? *</label>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    {ENGAGEMENT_TYPES.map((type) => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => setForm({ ...form, engagement_type: type })}
+                        className={`flex-1 px-4 py-3 text-sm rounded-sm border text-left transition-all duration-200 ${
+                          form.engagement_type === type
+                            ? 'bg-accent border-accent text-white'
+                            : 'border-white/10 text-text-secondary hover:border-accent/40 hover:text-white'
+                        }`}
+                      >
+                        {type}
+                      </button>
                     ))}
-                  </select>
-
-                  <select
-                    required
-                    value={form.budget_range}
-                    onChange={(e) => setForm({ ...form, budget_range: e.target.value })}
-                    className={inputClass}
-                  >
-                    <option value="" disabled>Budget Range</option>
-                    {BUDGET_RANGES.map((b) => (
-                      <option key={b} value={b} className="bg-black">{b}</option>
-                    ))}
-                  </select>
+                  </div>
                 </div>
 
-                <textarea
-                  placeholder="Tell us about your project..."
-                  required
-                  rows={5}
-                  value={form.message}
-                  onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  className={`${inputClass} resize-none`}
-                />
+                {/* Additional message */}
+                <div>
+                  <label className={labelClass}>
+                    Anything else you&apos;d like us to know?
+                    <span className="text-text-secondary font-normal ml-1">(optional)</span>
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    placeholder="Tell us more about your vision, timeline, or any specific requirements..."
+                    className={`${inputClass} resize-none`}
+                  />
+                </div>
 
-                {error && (
-                  <p className="text-red-400 text-sm">{error}</p>
-                )}
+                {error && <p className="text-red-400 text-sm">{error}</p>}
 
                 <button
                   type="submit"
@@ -208,15 +301,9 @@ export default function Contact() {
                   className="w-full flex items-center justify-center gap-3 py-4 bg-accent hover:bg-accent-hover disabled:opacity-60 text-white font-medium rounded-sm transition-all duration-300 hover:-translate-y-px hover:shadow-lg hover:shadow-accent/20"
                 >
                   {submitting ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      Sending...
-                    </>
+                    <><Loader2 size={16} className="animate-spin" />Sending...</>
                   ) : (
-                    <>
-                      <Send size={16} />
-                      Send Message
-                    </>
+                    <><Send size={16} />Submit &rarr;</>
                   )}
                 </button>
               </form>
