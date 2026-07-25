@@ -6,7 +6,7 @@ import { Mail, Phone, Instagram, Youtube } from 'lucide-react'
 const navLinks = [
   { label: 'About', href: '#about' },
   { label: 'Services', href: '#services' },
-  { label: 'Projects', href: '#projects' },
+  
   { label: 'Testimonials', href: '#testimonials' },
   { label: 'Contact', href: '#contact' },
 ]
@@ -56,11 +56,11 @@ export default function Footer() {
             <h4 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">Contact</h4>
             <div className="space-y-3">
               <a
-                href="tel:08151603641"
+                href="tel:08141603641"
                 className="flex items-center gap-2 text-text-secondary hover:text-white text-sm transition-colors"
               >
                 <Phone size={14} className="text-accent" />
-                08151603641
+                08141603641
               </a>
               <a
                 href="mailto:Danielchukwubuikem56@gmail.com"
