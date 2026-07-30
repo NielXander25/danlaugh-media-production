@@ -16,6 +16,8 @@ const GENRES = [
   'Sports',
   'Music',
   'Animation',
+  'Social Media Reels',
+  'Others',
 ]
 
 const emptyForm = {
