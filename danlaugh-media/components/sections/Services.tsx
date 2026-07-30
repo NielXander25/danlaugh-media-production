@@ -62,6 +62,18 @@ const SERVICES = [
     title: 'Animation',
     description: 'Creative 2D and 3D animations that bring your ideas to life with imagination and precision.',
   },
+  {
+    icon: Zap,
+    genre: 'Social Media Reels',
+    title: 'Social Media Reels',
+    description: 'Fast-paced, engaging reels crafted for Instagram, TikTok, and Facebook that stop the scroll and drive engagement.',
+  },
+  {
+    icon: Film,
+    genre: 'Others',
+    title: 'Others',
+    description: 'Have a unique project that doesn\'t fit a category? We\'re open to creative briefs of all kinds.',
+  },
 ]
 
 function ServiceCard({
