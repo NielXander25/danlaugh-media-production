@@ -14,7 +14,7 @@ const fadeUpVariants = {
 
 export default function Hero() {
   const scrollToProjects = () => {
-    document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth' })
+  document.querySelector('#services')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   const scrollDown = () => {
