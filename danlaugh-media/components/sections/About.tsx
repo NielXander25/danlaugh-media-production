@@ -2,14 +2,47 @@
 
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import Image from 'next/image'
 import { useAbout } from '@/lib/hooks/useAbout'
-import { Award, Film, Star, Users } from 'lucide-react'
+import { Award, Film, Users } from 'lucide-react'
 
 const skills = [
   'Color Grading', 'Motion Graphics', 'Sound Design',
   'Cinematic Editing', 'VFX Integration', 'Brand Films',
 ]
+
+// Detect media type from URL
+function getMediaType(url: string): 'video' | 'gif' | 'image' {
+  const lower = url.toLowerCase()
+  if (lower.endsWith('.mp4') || lower.endsWith('.webm') || lower.endsWith('.ogg')) return 'video'
+  if (lower.endsWith('.gif')) return 'gif'
+  return 'image'
+}
+
+function MediaDisplay({ url, alt }: { url: string; alt: string }) {
+  const type = getMediaType(url)
+
+  if (type === 'video') {
+    return (
+      <video
+        src={url}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="w-full h-full object-cover"
+      />
+    )
+  }
+
+  // gif or image — both use img tag
+  return (
+    <img
+      src={url}
+      alt={alt}
+      className="w-full h-full object-cover"
+    />
+  )
+}
 
 export default function About() {
   const ref = useRef(null)
@@ -24,18 +57,16 @@ export default function About() {
 
   return (
     <section id="about" ref={ref} className="section-padding bg-bg-secondary relative overflow-hidden">
-      {/* Background accent */}
       <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-accent/3 rounded-full blur-[100px]" />
 
       <div className="max-w-7xl mx-auto relative">
-        {/* Section label */}
         <motion.div {...fadeUp(0)} className="flex items-center gap-3 mb-16">
           <span className="w-8 h-px bg-accent" />
           <span className="text-accent text-xs font-mono tracking-[0.3em] uppercase">About Us</span>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left: Profile Image */}
+          {/* Left: Animated Logo / Profile Media */}
           <motion.div {...fadeUp(0.1)} className="relative">
             <div className="relative aspect-[4/5] max-w-md mx-auto lg:mx-0 overflow-hidden rounded-sm">
               {/* Decorative frame */}
@@ -45,24 +76,24 @@ export default function About() {
               {loading ? (
                 <div className="w-full h-full bg-white/5 animate-pulse" />
               ) : about?.image_url ? (
-                <Image
-                  src={about.image_url}
+                <MediaDisplay
+                  url={about.image_url}
                   alt="Danlaugh Media Production"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-white/5 to-white/[0.02] flex items-center justify-center">
-                  <div className="text-center">
-                    <Film size={48} className="text-accent/40 mx-auto mb-3" />
-                    <span className="text-text-secondary text-sm">Profile image</span>
-                  </div>
-                </div>
+                /* Default: show the local animated logo from public folder */
+                <video
+                  src="/logo-animated.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
               )}
 
               {/* Overlay gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
             </div>
 
             {/* Experience badge */}
@@ -83,15 +114,15 @@ export default function About() {
             </motion.h2>
 
             <motion.p {...fadeUp(0.2)} className="text-text-secondary leading-relaxed text-base">
-              Danlaugh Media Production is a creative video production studio dedicated to telling 
-              powerful visual stories. Founded on the belief that every frame matters, we bring 
-              cinematic excellence to every project — whether it&apos;s a brand commercial, music video, 
+              Danlaugh Media Production is a creative video production studio dedicated to telling
+              powerful visual stories. Founded on the belief that every frame matters, we bring
+              cinematic excellence to every project — whether it&apos;s a brand commercial, music video,
               or documentary.
             </motion.p>
 
             <motion.p {...fadeUp(0.25)} className="text-text-secondary leading-relaxed text-base">
-              Our approach blends technical mastery with artistic intuition. We don&apos;t just edit 
-              videos — we sculpt narratives, build emotions, and create moments that linger long 
+              Our approach blends technical mastery with artistic intuition. We don&apos;t just edit
+              videos — we sculpt narratives, build emotions, and create moments that linger long
               after the screen goes dark.
             </motion.p>
 
