@@ -10,38 +10,11 @@ const skills = [
   'Cinematic Editing', 'VFX Integration', 'Brand Films',
 ]
 
-// Detect media type from URL
 function getMediaType(url: string): 'video' | 'gif' | 'image' {
   const lower = url.toLowerCase()
-  if (lower.endsWith('.mp4') || lower.endsWith('.webm') || lower.endsWith('.ogg')) return 'video'
-  if (lower.endsWith('.gif')) return 'gif'
+  if (lower.includes('.mp4') || lower.includes('.webm') || lower.includes('.ogg')) return 'video'
+  if (lower.includes('.gif')) return 'gif'
   return 'image'
-}
-
-function MediaDisplay({ url, alt }: { url: string; alt: string }) {
-  const type = getMediaType(url)
-
-  if (type === 'video') {
-    return (
-      <video
-        src={url}
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="w-full h-full object-cover"
-      />
-    )
-  }
-
-  // gif or image — both use img tag
-  return (
-    <img
-      src={url}
-      alt={alt}
-      className="w-full h-full object-cover"
-    />
-  )
 }
 
 export default function About() {
@@ -55,6 +28,9 @@ export default function About() {
     transition: { duration: 0.6, ease: 'easeInOut', delay },
   })
 
+  const mediaUrl = about?.image_url || '/logo-animated.mp4'
+  const mediaType = getMediaType(mediaUrl)
+
   return (
     <section id="about" ref={ref} className="section-padding bg-bg-secondary relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-accent/3 rounded-full blur-[100px]" />
@@ -66,40 +42,41 @@ export default function About() {
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left: Animated Logo / Profile Media */}
+          {/* Left: Animated Logo */}
           <motion.div {...fadeUp(0.1)} className="relative">
-            <div className="relative aspect-[4/5] max-w-md mx-auto lg:mx-0 overflow-hidden rounded-sm">
-              {/* Decorative frame */}
-              <div className="absolute -top-3 -left-3 w-24 h-24 border-l-2 border-t-2 border-accent/40 z-10" />
-              <div className="absolute -bottom-3 -right-3 w-24 h-24 border-r-2 border-b-2 border-accent/40 z-10" />
+            <div className="relative aspect-[4/5] max-w-md mx-auto lg:mx-0 rounded-sm overflow-hidden bg-black">
+              <div className="absolute -top-3 -left-3 w-24 h-24 border-l-2 border-t-2 border-accent/40 z-10 pointer-events-none" />
+              <div className="absolute -bottom-3 -right-3 w-24 h-24 border-r-2 border-b-2 border-accent/40 z-10 pointer-events-none" />
 
               {loading ? (
-                <div className="w-full h-full bg-white/5 animate-pulse" />
-              ) : about?.image_url ? (
-                <MediaDisplay
-                  url={about.image_url}
-                  alt="Danlaugh Media Production"
-                />
-              ) : (
-                /* Default: show the local animated logo from public folder */
+                <div className="w-full h-full bg-white/5 animate-pulse flex items-center justify-center">
+                  <Film size={32} className="text-accent/30" />
+                </div>
+              ) : mediaType === 'video' ? (
                 <video
-                  src="/logo-animated.mp4"
+                  key={mediaUrl}
                   autoPlay
                   loop
                   muted
                   playsInline
-                  className="w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover"
+                >
+                  <source src={mediaUrl} type="video/mp4" />
+                </video>
+              ) : (
+                <img
+                  src={mediaUrl}
+                  alt="Danlaugh Media Production"
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
               )}
 
-              {/* Overlay gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none z-10" />
             </div>
 
-            {/* Experience badge */}
             <motion.div
               {...fadeUp(0.3)}
-              className="absolute -bottom-6 -right-0 lg:-right-6 bg-black border border-white/10 px-5 py-4 rounded-sm"
+              className="absolute -bottom-6 right-0 lg:-right-6 bg-black border border-white/10 px-5 py-4 rounded-sm z-20"
             >
               <div className="font-display font-bold text-3xl text-accent">5+</div>
               <div className="text-text-secondary text-xs tracking-wider uppercase mt-1">Years Experience</div>
@@ -116,17 +93,16 @@ export default function About() {
             <motion.p {...fadeUp(0.2)} className="text-text-secondary leading-relaxed text-base">
               Danlaugh Media Production is a creative video production studio dedicated to telling
               powerful visual stories. Founded on the belief that every frame matters, we bring
-              cinematic excellence to every project — whether it&apos;s a brand commercial, music video,
+              cinematic excellence to every project — whether it is a brand commercial, music video,
               or documentary.
             </motion.p>
 
             <motion.p {...fadeUp(0.25)} className="text-text-secondary leading-relaxed text-base">
-              Our approach blends technical mastery with artistic intuition. We don&apos;t just edit
+              Our approach blends technical mastery with artistic intuition. We do not just edit
               videos — we sculpt narratives, build emotions, and create moments that linger long
               after the screen goes dark.
             </motion.p>
 
-            {/* Skills */}
             <motion.div {...fadeUp(0.3)} className="flex flex-wrap gap-2 pt-2">
               {skills.map((skill) => (
                 <span
@@ -138,7 +114,6 @@ export default function About() {
               ))}
             </motion.div>
 
-            {/* Stats row */}
             <motion.div {...fadeUp(0.35)} className="grid grid-cols-3 gap-4 pt-4 border-t border-white/5">
               {[
                 { icon: Film, value: '200+', label: 'Projects Done' },
