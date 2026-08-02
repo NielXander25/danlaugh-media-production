@@ -15,6 +15,8 @@ const SERVICE_TYPES = [
   'Sports',
   'Music Video',
   'Animation',
+  'Social Media Reels',
+  'Others',
 ]
 
 const ENGAGEMENT_TYPES = [
@@ -118,7 +120,7 @@ export default function Contact() {
 
             <div className="space-y-4">
               <a
-                href="tel:08141603641"
+                href="tel:+2348141603641"
                 className="flex items-center gap-4 p-4 border border-white/8 hover:border-accent/25 rounded-sm transition-all duration-300 group"
               >
                 <div className="w-10 h-10 flex items-center justify-center bg-accent/10 group-hover:bg-accent/15 rounded-sm transition-colors">
@@ -126,7 +128,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <div className="text-xs text-text-secondary uppercase tracking-wider mb-0.5">WhatsApp / Call</div>
-                  <div className="text-white font-medium">08141603641</div>
+                  <div className="text-white font-medium">+234 814 160 3641</div>
                 </div>
               </a>
 
