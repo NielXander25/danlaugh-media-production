@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { useAbout } from '@/lib/hooks/useAbout'
 import { Award, Film, Users } from 'lucide-react'
@@ -17,9 +17,43 @@ function getMediaType(url: string): 'video' | 'gif' | 'image' {
   return 'image'
 }
 
+function VideoLogo({ src }: { src: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    video.muted = true
+    const playVideo = () => {
+      video.play().catch(() => {})
+    }
+    playVideo()
+    // Retry on user interaction if autoplay was blocked
+    document.addEventListener('click', playVideo, { once: true })
+    document.addEventListener('touchstart', playVideo, { once: true })
+    return () => {
+      document.removeEventListener('click', playVideo)
+      document.removeEventListener('touchstart', playVideo)
+    }
+  }, [src])
+
+  return (
+    <video
+      ref={videoRef}
+      loop
+      muted
+      playsInline
+      preload="auto"
+      className="absolute inset-0 w-full h-full object-cover"
+    >
+      <source src={src} type="video/mp4" />
+    </video>
+  )
+}
+
 export default function About() {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-100px' })
+  const sectionRef = useRef<HTMLElement>(null)
+  const inView = useInView(sectionRef, { once: true, margin: '-100px' })
   const { about, loading } = useAbout()
 
   const fadeUp = (delay = 0) => ({
@@ -32,7 +66,7 @@ export default function About() {
   const mediaType = getMediaType(mediaUrl)
 
   return (
-    <section id="about" ref={ref} className="section-padding bg-bg-secondary relative overflow-hidden">
+    <section id="about" ref={sectionRef} className="section-padding bg-bg-secondary relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-accent/3 rounded-full blur-[100px]" />
 
       <div className="max-w-7xl mx-auto relative">
@@ -44,7 +78,7 @@ export default function About() {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left: Animated Logo */}
           <motion.div {...fadeUp(0.1)} className="relative">
-            <div className="relative aspect-[4/5] max-w-md mx-auto lg:mx-0 rounded-sm overflow-hidden bg-black">
+            <div className="relative aspect-[4/5] max-w-md mx-auto lg:mx-0 rounded-sm overflow-hidden bg-black border border-white/8">
               <div className="absolute -top-3 -left-3 w-24 h-24 border-l-2 border-t-2 border-accent/40 z-10 pointer-events-none" />
               <div className="absolute -bottom-3 -right-3 w-24 h-24 border-r-2 border-b-2 border-accent/40 z-10 pointer-events-none" />
 
@@ -53,16 +87,7 @@ export default function About() {
                   <Film size={32} className="text-accent/30" />
                 </div>
               ) : mediaType === 'video' ? (
-                <video
-                  key={mediaUrl}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="absolute inset-0 w-full h-full object-cover"
-                >
-                  <source src={mediaUrl} type="video/mp4" />
-                </video>
+                <VideoLogo src={mediaUrl} />
               ) : (
                 <img
                   src={mediaUrl}
