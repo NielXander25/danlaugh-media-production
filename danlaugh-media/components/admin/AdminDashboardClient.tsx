@@ -4,18 +4,20 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Film, Quote, User, LogOut, Menu, ChevronRight, Home } from 'lucide-react'
+import { Film, Quote, User, LogOut, Menu, ChevronRight, Home, Mail } from 'lucide-react'
 import Link from 'next/link'
 import AdminProjects from '@/components/admin/AdminProjects'
 import AdminTestimonials from '@/components/admin/AdminTestimonials'
 import AboutImageManager from '@/components/admin/AboutImageManager'
+import AdminMessages from '@/components/admin/AdminMessages'
 
-type Tab = 'projects' | 'testimonials' | 'about'
+type Tab = 'projects' | 'testimonials' | 'about' | 'messages'
 
 const tabs = [
   { id: 'projects' as Tab, label: 'Projects', icon: Film },
   { id: 'testimonials' as Tab, label: 'Testimonials', icon: Quote },
-  { id: 'about' as Tab, label: 'About Image', icon: User },
+  { id: 'about' as Tab, label: 'About Media', icon: User },
+  { id: 'messages' as Tab, label: 'Messages', icon: Mail },
 ]
 
 interface Props {
@@ -125,6 +127,7 @@ export default function AdminDashboardClient({ userEmail }: Props) {
             {activeTab === 'projects'     && <AdminProjects />}
             {activeTab === 'testimonials' && <AdminTestimonials />}
             {activeTab === 'about'        && <AboutImageManager />}
+            {activeTab === 'messages'     && <AdminMessages />}
           </motion.div>
         </div>
       </main>
